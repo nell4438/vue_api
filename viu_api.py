@@ -90,22 +90,17 @@ def viucheck():
     
     # Check login response
     if any(key in login_response.text for key in ["status\":0", "Password must be in 6\\u201320 alphanumeric characters format.", "The email and password combination you have submitted is invalid", "error.user.auth.failed"]) or "401" in str(login_response.status_code):
-        print("Login failed.")
-        return None
+        return jsonify({"error": "No credentials provided"}), 400
     
     nickname = re.search(r"nickname\":\"(.*?)\"", login_response.text)
     if nickname:
         nickname = nickname.group(1)
-        print(f"Email Password: {login_data}")
-    else:
-        print("Failed to extract nickname from login_response.")
     
     at1 = re.search(r"token\":\"(.*?)\"}", login_response.text)
     if at1:
         at1 = at1.group(1)
     else:
-        print("Failed to extract token from login_response.")
-        return None
+        return jsonify({"error": "Failed to extract token from login_response."}), 400
     
     # User info request
     user_info_url = "https://api-gateway-global.viu.com/spu/bff/v2/paymentDetail?platform_flag_label=web&area_id=5&language_flag_id=3&platformFlagLabel=web&areaId=5&languageFlagId=3&countryCode=PH&ut=2"
